@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
-    'utilsapp.apps.UtilsappConfig'
+    'utilsapp.apps.UtilsappConfig',
+    'dubbo.apps.DubboConfig'
 ]
 
 MIDDLEWARE = [
@@ -122,3 +123,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# 配置文件的路径
+CONF_DIR = os.path.join(BASE_DIR, "conf.ini")

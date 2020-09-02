@@ -1,4 +1,8 @@
+import configparser
+
 import redis
+
+from TestPlatform import settings
 
 
 class PyRedis:
@@ -27,3 +31,17 @@ class PyRedis:
         except Exception as e:
             print(e)
 
+class ReadConf:
+    '''
+    通用的读取配置文件的方法
+    '''
+
+    def __int__(self):
+        pass
+
+    def get_conf(self, section, option):
+        conf_path = settings.CONF_DIR
+        cf = configparser.ConfigParser()
+        cf.read(conf_path)
+        conf = cf.get(section, option)
+        return conf

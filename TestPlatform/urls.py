@@ -20,5 +20,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # 工具的Url
-    path('api/utils/',include('utilsapp.urls'))
+    path('api/utils/',include('utilsapp.urls')),
+    #dubbo 的Url
+    path('api/dubbo/',include('dubbo.urls'))
 ]
