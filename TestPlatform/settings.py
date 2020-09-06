@@ -41,7 +41,8 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'utilsapp.apps.UtilsappConfig',
-    'dubbo.apps.DubboConfig'
+    'dubbo.apps.DubboConfig',
+    'users.apps.UsersConfig'
 ]
 
 MIDDLEWARE = [
@@ -80,8 +81,12 @@ WSGI_APPLICATION = 'TestPlatform.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'testplatform',
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
 
@@ -124,5 +129,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# 使用 新定义的user 不用django 的User
+AUTH_USER_MODEL = 'users.User'
 # 配置文件的路径
 CONF_DIR = os.path.join(BASE_DIR, "conf.ini")
