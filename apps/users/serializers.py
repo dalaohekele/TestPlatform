@@ -14,7 +14,16 @@ class UserRegSerializer(serializers.ModelSerializer):
         style={'input_type': 'password'}, help_text="密码", label="密码", write_only=True,
     )
 
-
     class Meta:
         model = User
         fields = ("name", "mobile", "email", 'password')
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    """
+    用户详情序列化类
+    """
+
+    class Meta:
+        model = User
+        fields = ("name", "email", "mobile")
