@@ -73,7 +73,7 @@ def result(code=HttpCode.ok, message="", data=None, kwargs=None):
 
 
 def ok():
-    return result()
+    return result(message="success")
 
 
 def ok_data(data=None):
