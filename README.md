@@ -16,7 +16,7 @@
  
  2、[请求Dubbo接口](https://blog.csdn.net/zxc19854/article/details/108382200)
  
- 3、[登陆，注册功能]()
+ 3、[登陆，注册功能](https://blog.csdn.net/zxc19854/article/details/108507765)
  
  如果觉得对你有帮助的话，可以点个start，关注一波。
  欢迎一起来开发这个测试工具平台
