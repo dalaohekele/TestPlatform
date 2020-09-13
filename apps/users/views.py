@@ -20,7 +20,7 @@ class UserRegisterView(CreateAPIView):
     serializer_class = UserRegSerializer
     permission_classes = [AllowAny]
 
-    def create(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -43,8 +43,9 @@ class CustomBackend(ModelBackend):
             return None
 
 
-class UserInfoView(RetrieveAPIView, ListAPIView):
+class UserInfoView(RetrieveAPIView):
     serializer_class = UserDetailSerializer
+    # permission_classes = (IsAuthenticated,) # 登陆才能请求
     authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 
     def get(self, request, *args):
