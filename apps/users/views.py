@@ -13,7 +13,7 @@ from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
 from users.models import User
 from users.serializers import UserRegSerializer, UserDetailSerializer
-from utilsapp.common import ok, params_error, unauth, ok_data
+from utilsapp.common import ok, params_error, unauth, ok_data, OwnerValidationError
 
 
 class UserRegisterView(CreateAPIView):
@@ -36,16 +36,16 @@ class CustomBackend(ModelBackend):
 
     def authenticate(self, username=None, password=None, **kwargs):
         try:
-            user = User.objects.get(Q(email=kwargs['mobile']) | Q(mobile=username))
+            user = User.objects.get(Q(email=kwargs['mobile']) | Q(mobile=kwargs['mobile']))
             if user.check_password(password):
                 return user
         except Exception as e:
-            return None
+            raise OwnerValidationError({"code": 400, "message": "用户名或密码错误", "data":""})
 
 
 class UserInfoView(RetrieveAPIView):
     serializer_class = UserDetailSerializer
-    permission_classes = (IsAuthenticated,) # 登陆才能请求
+    permission_classes = (IsAuthenticated,)  # 登陆才能请求
     authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 
     def get(self, request, *args):
@@ -74,7 +74,6 @@ class UsersPagination(PageNumberPagination):
 
 
 class UserInfosView(ListAPIView):
-
     serializer_class = UserDetailSerializer
     queryset = User.objects.all()
     # 分页
@@ -83,7 +82,8 @@ class UserInfosView(ListAPIView):
 
     def get(self, request, *args, **kwargs):
         total = self.queryset.all().count()
-        user_infos_str = serializers.serialize('json', self.queryset.all().order_by('-id'), fields=("name", "email", "mobile"))
+        user_infos_str = serializers.serialize('json', self.queryset.all().order_by('-id'),
+                                               fields=("name", "email", "mobile"))
         user_infos = json.loads(user_infos_str)
         # 实例化分页对象，获取数据库中的分页数据
         paginator = UsersPagination()

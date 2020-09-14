@@ -1,6 +1,8 @@
 import configparser
 
 import redis
+from rest_framework import status
+from rest_framework.exceptions import APIException, _get_error_details
 from rest_framework.response import Response
 
 from TestPlatform import settings
@@ -11,12 +13,12 @@ class PyRedis:
         self.host = '127.0.0.1'
         self.port = '6379'
         self.db = 0
-        pool = redis.ConnectionPool(host=self.host, port=self.port,db=self.db)
+        pool = redis.ConnectionPool(host=self.host, port=self.port, db=self.db)
         self.conn = redis.Redis(connection_pool=pool)
 
     def set_key(self, key, value):
         try:
-            return self.conn.set(name=key, value=str(value,encoding='gbk'))
+            return self.conn.set(name=key, value=str(value, encoding='gbk'))
         except Exception as e:
             print(e)
 
@@ -31,6 +33,7 @@ class PyRedis:
             return self.conn.delete(key)
         except Exception as e:
             print(e)
+
 
 class ReadConf:
     '''
@@ -77,7 +80,7 @@ def ok():
 
 
 def ok_data(data=None):
-    return result(data=data,message="success")
+    return result(data=data, message="success")
 
 
 # 参数错误
@@ -98,3 +101,22 @@ def method_error(message="methods error", data=None):
 # 服务器内部错误
 def server_error(message="server error", data=None):
     return result(code=HttpCode.servererror, message=message, data=data)
+
+
+class OwnerValidationError(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = 'Invalid input'
+    default_code = 'invalid'
+
+    def __init__(self, detail=None, code=None):
+        if detail is None:
+            detail = self.default_detail
+        if code is None:
+            code = self.default_code
+
+        # For validation failures, we may collect many errors together,
+        # so the details should always be coerced to a list if not already.
+        if not isinstance(detail, dict) and not isinstance(detail, list):
+            detail = {detail}
+
+        self.detail = _get_error_details(detail, code)
