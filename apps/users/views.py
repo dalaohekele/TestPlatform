@@ -7,7 +7,7 @@ from django.db.models import Q
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import CreateAPIView, RetrieveAPIView, ListAPIView
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth.backends import ModelBackend
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
@@ -45,7 +45,7 @@ class CustomBackend(ModelBackend):
 
 class UserInfoView(RetrieveAPIView):
     serializer_class = UserDetailSerializer
-    # permission_classes = (IsAuthenticated,) # 登陆才能请求
+    permission_classes = (IsAuthenticated,) # 登陆才能请求
     authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 
     def get(self, request, *args):

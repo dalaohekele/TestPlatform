@@ -17,7 +17,7 @@ from utilsapp.common import ok_data, params_error
 
 
 class DubboApi(CreateAPIView):
-    # permission_classes = (IsAuthenticated,)  # 登陆才能请求
+    permission_classes = (IsAuthenticated,)  # 登陆才能请求
     authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
     serializer_class = InvokeSerializer
 
@@ -51,7 +51,7 @@ class DubboApi(CreateAPIView):
 
 class DubboInfoView(RetrieveAPIView):
     serializer_class = ControllerInfoSerializer
-    # permission_classes = (IsAuthenticated,) # 登陆才能请求
+    permission_classes = (IsAuthenticated,) # 登陆才能请求
     authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 
     def get(self, request, *args):
