@@ -82,6 +82,7 @@ class UserInfosView(ListAPIView):
     authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 
     def get(self, request, *args, **kwargs):
+        total = self.queryset.all().count()
         user_infos_str = serializers.serialize('json', self.queryset.all().order_by('-id'), fields=("name", "email", "mobile"))
         user_infos = json.loads(user_infos_str)
         # 实例化分页对象，获取数据库中的分页数据
@@ -92,4 +93,4 @@ class UserInfosView(ListAPIView):
         for user in page_user_list:
             user_info = user.get("fields")
             json_list.append(user_info)
-        return ok_data(json_list)
+        return ok_data(data={"total": total, "users": json_list})
