@@ -125,4 +125,4 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # 配置文件的路径
-CONF_DIR = os.path.join(BASE_DIR, "conf.ini")
+CONF_DIR = os.path.join(BASE_DIR, "config.ini")
