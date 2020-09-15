@@ -164,4 +164,4 @@ STATIC_URL = '/static/'
 # 使用 新定义的user 不用django 的User
 AUTH_USER_MODEL = 'users.User'
 # 配置文件的路径
-CONF_DIR = os.path.join(BASE_DIR, "conf.ini")
+CONF_DIR = os.path.join(BASE_DIR, "config.ini")
