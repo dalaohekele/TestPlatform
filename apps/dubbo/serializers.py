@@ -16,4 +16,4 @@ class ControllerInfoSerializer(ModelSerializer):
 class InvokeSerializer(ModelSerializer):
     class Meta:
         model = DubboControllerLogs
-        fields = ("service_name", "dubbo_method", "params_type", "params")
+        fields = ("service_name", "dubbo_method", "params_type")

@@ -76,6 +76,7 @@ class UsersPagination(PageNumberPagination):
 class UserInfosView(ListAPIView):
     serializer_class = UserDetailSerializer
     queryset = User.objects.all()
+    permission_classes = (IsAuthenticated,)  # 登陆才能请求
     # 分页
     pagination_class = UsersPagination
     authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)

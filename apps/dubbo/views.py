@@ -29,7 +29,7 @@ class DubboApi(CreateAPIView):
         """
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(user_id=request.user.id)
+            serializer.save(user_id=request.user.id, params=json.dumps(request.data.get('params')))
         else:
             return params_error(message=serializer.errors)
         service_name = request.data.get('service_name')
@@ -46,7 +46,7 @@ class DubboApi(CreateAPIView):
         else:
             args = params
             result = InvokeDubboApi(server_host, server_port).invoke_dubbo_api(service_name, dubbo_method, *args)
-        return Response(json.loads(result))
+        return ok_data(data=json.loads(result))
 
 
 class DubboInfoView(RetrieveAPIView):
@@ -78,22 +78,37 @@ class DubboPagination(PageNumberPagination):
 
 
 class DubboInfosView(ListAPIView):
-
     serializer_class = ControllerInfoSerializer
-    queryset = DubboControllerLogs.objects.all()
     # 分页
     pagination_class = DubboPagination
+    permission_classes = (IsAuthenticated,)
     authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 
     def get(self, request, *args, **kwargs):
-        dubbo_infos_str = serializers.serialize('json', self.queryset.all().order_by('-id'), fields=("service_name", "dubbo_method", "params_type", "params","user_id"))
+        service_name = request.GET.get("service_name")
+        dubbo_method = request.GET.get("dubbo_method")
+        if service_name =="" and dubbo_method =="":
+            search_dubbo = DubboControllerLogs.objects.all()
+            total = search_dubbo.count()
+        elif service_name != "" and dubbo_method != "":
+            search_dubbo = DubboControllerLogs.objects.filter(Q(service_name__icontains=service_name) &
+                                                              Q(dubbo_method__icontains=dubbo_method))
+            total = search_dubbo.count()
+        elif dubbo_method != "":
+            search_dubbo = DubboControllerLogs.objects.filter(Q(dubbo_method__icontains=dubbo_method))
+            total = search_dubbo.count()
+        else:
+            search_dubbo = DubboControllerLogs.objects.filter(Q(service_name__icontains=service_name))
+            total = search_dubbo.count()
+        dubbo_infos_str = serializers.serialize('json', search_dubbo.order_by('-id'),
+                                                fields=(
+                                                    "service_name", "dubbo_method", "params_type", "params", "user_id"))
         dubbo_infos = json.loads(dubbo_infos_str)
         # 实例化分页对象，获取数据库中的分页数据
         paginator = DubboPagination()
-        page_user_list = paginator.paginate_queryset(dubbo_infos, self.request, view=self)
-
+        page_info_list = paginator.paginate_queryset(dubbo_infos, self.request, view=self)
         json_list = []
-        for dubbo in page_user_list:
+        for dubbo in page_info_list:
             dubbo_info = dubbo.get("fields")
             json_list.append(dubbo_info)
-        return ok_data(json_list)
+        return ok_data(data={"total": total, "dubbo_infos": json_list})
